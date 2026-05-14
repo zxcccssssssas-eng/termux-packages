@@ -49,9 +49,14 @@ jobs:
         fetch-depth: 1000
     - name: Patch mesa source for timespec_sub_saturate
       run: |
-                 # Fix missing include in loader_wayland_helper.c
-                 find packages/mesa -name loader_wayland_helper.c -exec sed -i '1i #include "util/os_time.h"' {} \;
-
+        MESA_BUILD_SH=$(find . -path "*/mesa/build.sh" | head -n 1)
+        if [ -n "$MESA_BUILD_SH" ]; then
+          echo "Injecting timespec_sub_saturate fix into $MESA_BUILD_SH..."
+          echo 'termux_step_post_patch() { find . -name loader_wayland_helper.c -exec sed -i "1i #include \"util/os_time.h\"" {} + ; }' >> "$MESA_BUILD_SH"
+        else
+          echo "ERROR: Could not find mesa/build.sh"
+          exit 1
+        fi
     - name: Gather build summary
       id: build-info
       env:
