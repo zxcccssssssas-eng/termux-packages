@@ -47,6 +47,7 @@ jobs:
       uses: actions/checkout@v6
       with:
         fetch-depth: 1000
+        
     - name: Patch mesa source for timespec_sub_saturate
       run: |
         MESA_BUILD_SH=$(find . -path "*/mesa/build.sh" | head -n 1)
@@ -57,6 +58,7 @@ jobs:
           echo "ERROR: Could not find mesa/build.sh"
           exit 1
         fi
+
     - name: Gather build summary
       id: build-info
       env:
